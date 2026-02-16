@@ -1,15 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Instagram, Mail, Sun, Moon, Languages } from 'lucide-react';
+import { Menu, X, Sun, Moon, Languages } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HabeshaPattern } from './components/HabeshaPattern';
 import { WhatsAppToggle } from './components/WhatsAppToggle';
 import Home from './pages/Home';
-import Works from './pages/Works';
 import { TRANSLATIONS } from './constants';
 
 const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState<'home' | 'works'>('home');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
@@ -51,44 +49,48 @@ const App: React.FC = () => {
 
   const t = TRANSLATIONS[lang];
 
-  const handleNavigate = (page: 'home' | 'works', anchor?: string) => {
-    setCurrentPage(page);
+  const scrollToSection = (id: string) => {
     setIsMenuOpen(false);
-    if (page === 'home' && anchor) {
-      setTimeout(() => {
-        const element = document.getElementById(anchor);
-        if (element) element.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 80; // Nav height
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
   return (
     <div className={`min-h-screen font-sans selection:bg-[#d97706] selection:text-white transition-colors duration-500 ${theme === 'dark' ? 'bg-[#1a0f0e] text-[#fffaf5]' : 'bg-[#fffaf5] text-[#1a0f0e]'}`}>
       {/* Shared Nav */}
-      <nav className={`fixed w-full z-50 transition-all duration-500 ${scrolled || currentPage === 'works' ? 'bg-inherit/95 backdrop-blur-md py-3 shadow-xl border-b border-orange-900/10' : 'bg-transparent py-6 lg:py-8'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? 'bg-inherit/95 backdrop-blur-md py-3 shadow-xl border-b border-orange-900/10' : 'bg-transparent py-6 lg:py-8'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           <motion.div 
             initial={{ opacity: 0, x: -20 }} 
             animate={{ opacity: 1, x: 0 }} 
             className="flex items-center space-x-2 relative z-[60] cursor-pointer" 
-            onClick={() => handleNavigate('home')}
+            onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
           >
             <span className="text-xl lg:text-2xl font-serif font-bold tracking-tighter gradient-accent">HELEN</span>
             <span className="text-[9px] lg:text-[10px] tracking-[0.3em] font-light text-amber-500/40 pt-1 uppercase">Artistry</span>
           </motion.div>
           
-          <div className="hidden md:flex items-center space-x-8 text-[12px] font-bold tracking-[0.3em] uppercase opacity-60">
-            <button onClick={() => handleNavigate('home', 'about')} className="hover:text-[#d97706] transition-colors relative group">
+          <div className="hidden md:flex items-center space-x-8 text-[10px] font-bold tracking-[0.3em] uppercase opacity-60">
+            <button onClick={() => scrollToSection('about')} className="hover:text-[#d97706] transition-colors relative group">
               {t.nav.about}
               <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#d97706] transition-all group-hover:w-full"></span>
             </button>
-            <button onClick={() => handleNavigate('works')} className={`hover:text-[#d97706] transition-colors relative group ${currentPage === 'works' ? 'text-[#d97706]' : ''}`}>
+            <button onClick={() => scrollToSection('work')} className="hover:text-[#d97706] transition-colors relative group">
               {t.nav.work}
-              <span className={`absolute -bottom-1 left-0 h-[1px] bg-[#d97706] transition-all group-hover:w-full ${currentPage === 'works' ? 'w-full' : 'w-0'}`}></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#d97706] transition-all group-hover:w-full"></span>
             </button>
-            <button onClick={() => handleNavigate('home', 'services')} className="hover:text-[#d97706] transition-colors relative group">
+            <button onClick={() => scrollToSection('services')} className="hover:text-[#d97706] transition-colors relative group">
               {t.nav.services}
               <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#d97706] transition-all group-hover:w-full"></span>
             </button>
@@ -103,7 +105,7 @@ const App: React.FC = () => {
               </button>
             </div>
 
-            <button onClick={() => handleNavigate('home', 'contact')} className="bg-[#d97706] text-[#fffaf5] px-6 py-2 rounded-full hover:bg-orange-400 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-orange-500/10">
+            <button onClick={() => scrollToSection('contact')} className="bg-[#d97706] text-[#fffaf5] px-6 py-2 rounded-full hover:bg-orange-400 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-orange-500/10">
               {t.nav.book}
             </button>
           </div>
@@ -129,21 +131,21 @@ const App: React.FC = () => {
             >
               <HabeshaPattern className="absolute inset-0 opacity-10 pointer-events-none" />
               <div className="relative z-10 space-y-8 flex flex-col">
-                <button onClick={() => handleNavigate('home', 'about')} className="text-4xl sm:text-6xl font-serif font-black tracking-tighter text-left">
+                <button onClick={() => scrollToSection('about')} className="text-4xl sm:text-6xl font-serif font-black tracking-tighter text-left">
                   {t.nav.about}
                 </button>
-                <button onClick={() => handleNavigate('works')} className="text-4xl sm:text-6xl font-serif font-black tracking-tighter text-left">
+                <button onClick={() => scrollToSection('work')} className="text-4xl sm:text-6xl font-serif font-black tracking-tighter text-left">
                   {t.nav.work}
                 </button>
-                <button onClick={() => handleNavigate('home', 'services')} className="text-4xl sm:text-6xl font-serif font-black tracking-tighter text-left">
+                <button onClick={() => scrollToSection('services')} className="text-4xl sm:text-6xl font-serif font-black tracking-tighter text-left">
                   {t.nav.services}
                 </button>
-                <button onClick={() => handleNavigate('home', 'contact')} className="text-4xl sm:text-6xl font-serif font-black tracking-tighter text-left">
+                <button onClick={() => scrollToSection('contact')} className="text-4xl sm:text-6xl font-serif font-black tracking-tighter text-left">
                   {t.nav.contact}
                 </button>
                 
                 <div className="pt-10 border-t border-orange-900/10 flex flex-col gap-6">
-                  <button onClick={() => handleNavigate('home', 'contact')} className="bg-[#d97706] text-[#fffaf5] px-10 py-5 rounded-full font-bold text-center uppercase tracking-widest text-xs">
+                  <button onClick={() => scrollToSection('contact')} className="bg-[#d97706] text-[#fffaf5] px-10 py-5 rounded-full font-bold text-center uppercase tracking-widest text-xs">
                     {t.nav.book}
                   </button>
                 </div>
@@ -153,14 +155,8 @@ const App: React.FC = () => {
         </AnimatePresence>
       </nav>
 
-      {/* Pages */}
-      <AnimatePresence mode="wait">
-        {currentPage === 'home' ? (
-          <Home key="home" lang={lang} theme={theme} onViewWorks={() => setCurrentPage('works')} />
-        ) : (
-          <Works key="works" lang={lang} onBack={() => setCurrentPage('home')} />
-        )}
-      </AnimatePresence>
+      {/* Single Home Page with all content */}
+      <Home lang={lang} theme={theme} />
 
       {/* Floating Elements */}
       <WhatsAppToggle />
