@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Helen Artistry | Modern Habesha Makeup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&family=Noto+Sans+Ethiopic:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ['Playfair Display', 'serif'],
+              sans: ['Inter', 'Noto Sans Ethiopic', 'sans-serif'],
+            },
+          }
+        }
+      }
+    </script>
+    <style>
+      :root {
+        --bg-color: #1a0f0e;
+        --text-color: #fffaf5;
+      }
+      .light {
+        --bg-color: #fffaf5;
+        --text-color: #1a0f0e;
+      }
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        transition: background-color 0.5s ease, color 0.5s ease;
+        overflow-x: hidden;
+      }
+      .habesha-pattern {
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l5 10 10 5-10 5-5 10-5-10-10-5 10-5 5-10z' fill='%23d97706' fill-opacity='0.05'/%3E%3C/svg%3E");
+      }
+      .gradient-accent {
+        background: linear-gradient(135deg, #fca5a5 0%, #d97706 50%, #78350f 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .swiper-pagination-bullet {
+        background: #d97706 !important;
+      }
+      .swiper-button-next, .swiper-button-prev {
+        color: #d97706 !important;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "framer-motion": "https://esm.sh/framer-motion@^11.11.11",
+    "swiper": "https://esm.sh/swiper@^11.1.4",
+    "swiper/react": "https://esm.sh/swiper@^11.1.4/react",
+    "swiper/modules": "https://esm.sh/swiper@^11.1.4/modules",
+    "swiper/css": "https://esm.sh/swiper@11.1.4/swiper-bundle.min.css",
+    "swiper/": "https://esm.sh/swiper@^12.1.0/"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
