@@ -7,7 +7,7 @@ export const IMAGES = {
     portrait: "a (109).jpg",
   },
   about: {
-    mainImage: "/about.webp",
+    mainImage: "/about.jpg",
   },
 };
 
