@@ -1,26 +1,97 @@
 
-import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Film, Sparkles, Scissors, Gem, Camera, Music, Star, Mail, Instagram } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Film, Sparkles, Scissors, Gem, Camera, Music, Star, Mail, Instagram, ChevronDown, ChevronUp } from 'lucide-react';
 import { HabeshaPattern, AccentDivider } from '../components/HabeshaPattern';
 import { PortfolioSlider } from '../components/PortfolioSlider';
 import { IMAGES, TRANSLATIONS, PORTFOLIO_DATA } from '../constants';
+import { PortfolioItem } from '../types';
 
 interface HomeProps {
   lang: 'en' | 'am';
   theme: 'dark' | 'light';
-  onViewWorks: () => void;
 }
 
-const Home: React.FC<HomeProps> = ({ lang, theme, onViewWorks }) => {
+const CategoryGrid: React.FC<{ 
+  category: string; 
+  label: string; 
+  index: number; 
+  items: PortfolioItem[];
+  lang: 'en' | 'am';
+}> = ({ category, label, index, items, lang }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const INITIAL_COUNT = 4;
+  const visibleItems = isExpanded ? items : items.slice(0, INITIAL_COUNT);
+
+  return (
+    <section className="mb-32 relative">
+      <div className="flex items-baseline space-x-4 mb-12">
+        <span className="text-[10px] font-bold text-[#d97706] tracking-[0.5em] opacity-40">0{index + 1}</span>
+        <h3 className="text-4xl sm:text-6xl font-serif font-bold tracking-tight">{label}</h3>
+        <div className="h-[1px] flex-grow bg-gradient-to-r from-current/10 to-transparent ml-8"></div>
+      </div>
+
+      <motion.div 
+        layout
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8"
+      >
+        <AnimatePresence mode="popLayout">
+          {visibleItems.map((item, i) => (
+            <motion.div 
+              layout
+              key={item.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.5, delay: isExpanded ? 0 : i * 0.1 }}
+              className="group relative aspect-[3/4] overflow-hidden rounded-[2rem] bg-current/10 shadow-xl"
+            >
+              <img 
+                src={item.imageUrl} 
+                alt={item.title} 
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+              <div className="absolute inset-0 p-8 flex flex-col justify-end translate-y-8 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <h4 className="text-xl font-serif font-bold text-white mb-2">{item.title}</h4>
+                <p className="text-[10px] text-gray-300 font-sans line-clamp-2 uppercase tracking-widest">{item.category}</p>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </motion.div>
+
+      {items.length > INITIAL_COUNT && (
+        <div className="mt-12 flex justify-center">
+          <button 
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center space-x-3 px-10 py-4 rounded-full border border-current/20 hover:border-[#d97706] transition-all group font-bold uppercase tracking-widest text-[10px]"
+          >
+            <span>{isExpanded ? (lang === 'en' ? 'Show Less' : 'ቀንስ') : (lang === 'en' ? `Show More ${label}` : 'ተጨማሪ አሳይ')}</span>
+            {isExpanded ? <ChevronUp size={16} className="group-hover:-translate-y-1 transition-transform" /> : <ChevronDown size={16} className="group-hover:translate-y-1 transition-transform" />}
+          </button>
+        </div>
+      )}
+    </section>
+  );
+};
+
+const Home: React.FC<HomeProps> = ({ lang, theme }) => {
   const t = TRANSLATIONS[lang];
 
-  // Randomize the portfolio items for the home page to show a mix of categories
+  // For the highlights slider
   const featuredWorks = useMemo(() => {
     return [...PORTFOLIO_DATA]
       .sort(() => Math.random() - 0.5)
       .slice(0, 15);
   }, []);
+
+  const categories = [
+    { id: 'Makeup', label: t.work.categories.makeup },
+    { id: 'Costume', label: t.work.categories.costume },
+    { id: 'Jewelry', label: t.work.categories.jewelry },
+    { id: 'Body Scars', label: t.work.categories.scars }
+  ];
 
   const getSkillIcon = (index: number) => {
     switch (index) {
@@ -68,14 +139,17 @@ const Home: React.FC<HomeProps> = ({ lang, theme, onViewWorks }) => {
                 {t.hero.subheading}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button onClick={onViewWorks} className="bg-[#d97706] text-[#fffaf5] px-8 py-4 rounded-full font-bold flex items-center justify-center space-x-3 hover:bg-orange-400 transition-all shadow-lg shadow-orange-500/10 group">
-                  <span>{lang === 'en' ? 'The Portfolio' : 'ስራዎችን ይመልከቱ'}</span>
+                <button onClick={() => {
+                  const el = document.getElementById('work');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }} className="bg-[#d97706] text-[#fffaf5] px-8 py-4 rounded-full font-bold flex items-center justify-center space-x-3 hover:bg-orange-400 transition-all shadow-lg shadow-orange-500/10 group">
+                  <span>{lang === 'en' ? 'Explore Works' : 'ስራዎችን ያስሱ'}</span>
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pt-8 border-t border-current opacity-20">
-              {['Scars', 'Makeup', 'Costume', 'Jewelry'].map((pillar, i) => (
+              {['Makeup', 'Costume', 'Jewelry', 'Scars'].map((pillar, i) => (
                 <div key={pillar} className="text-left">
                   <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#d97706] mb-1">0{i+1}</p>
                   <p className="text-[10px] sm:text-xs opacity-60 font-medium">{pillar}</p>
@@ -118,20 +192,41 @@ const Home: React.FC<HomeProps> = ({ lang, theme, onViewWorks }) => {
         </div>
       </section>
 
-      {/* Portfolio Slider Section (Limited to 15 items for Home Page highlights) */}
-      <section id="work" className="py-24 sm:py-32 relative overflow-hidden bg-current/5">
+      {/* Highlights Slider */}
+      <section className="py-24 relative overflow-hidden bg-current/5">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-8">
-            <div className="max-w-2xl">
-              <h2 className="text-4xl sm:text-6xl font-serif mb-6 tracking-tighter">{t.work.heading}</h2>
-              <p className="opacity-40 text-base sm:text-lg font-sans">A curated selection of cinematic transformations and editorial artistry for global artists.</p>
-            </div>
-            <button onClick={onViewWorks} className="text-[#d97706] font-bold uppercase tracking-[0.2em] text-[10px] flex items-center space-x-2 group border-b border-[#d97706]/20 pb-1">
-              <span>See All Category Works</span>
-              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </button>
+          <div className="max-w-2xl mb-12">
+            <h2 className="text-3xl sm:text-5xl font-serif mb-6 tracking-tighter">Artistry <span className="italic gradient-accent">Highlights</span></h2>
+            <p className="opacity-40 text-base font-sans">A curated mix of our most transformative cinematic works for global production houses.</p>
           </div>
           <PortfolioSlider items={featuredWorks} />
+        </div>
+      </section>
+
+      {/* Detailed Works Section - The 4 Droppable Sections */}
+      <section id="work" className="py-24 sm:py-32 relative">
+        <HabeshaPattern className="absolute inset-0 pointer-events-none opacity-[0.03]" />
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="mb-24 text-center max-w-3xl mx-auto">
+            <h2 className="text-4xl sm:text-7xl font-serif font-black tracking-tighter mb-8">{t.work.heading}</h2>
+            <p className="opacity-40 text-lg font-sans leading-relaxed">{t.work.subheading}</p>
+          </div>
+
+          <div className="space-y-4">
+            {categories.map((cat, idx) => {
+              const items = PORTFOLIO_DATA.filter(item => item.category === cat.id);
+              return (
+                <CategoryGrid 
+                  key={cat.id} 
+                  category={cat.id} 
+                  label={cat.label} 
+                  index={idx} 
+                  items={items}
+                  lang={lang}
+                />
+              );
+            })}
+          </div>
         </div>
       </section>
 
